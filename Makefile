@@ -1,26 +1,35 @@
 CC = gcc
+CXX = g++
+
 CFLAGS = -I./src/include -O3 -Wall -Wextra
-TARGET = memesim
+CXXFLAGS = -I./src/include -O3 -Wall -Wextra -std=c++17 -pthread
+
+TARGET = simulator
 
 SRCDIR = src
 BUILDDIR = build
 
-SOURCES = $(wildcard $(SRCDIR)/*.c)
-OBJECTS = $(patsubst $(SRCDIR)/%.c,$(BUILDDIR)/%.o,$(SOURCES))
+C_SOURCES = $(wildcard $(SRCDIR)/*.c)
+C_OBJECTS = $(patsubst $(SRCDIR)/%.c,$(BUILDDIR)/%.o,$(C_SOURCES))
+
+CXX_SOURCES = $(wildcard $(SRCDIR)/*.cpp)
+CXX_OBJECTS = $(patsubst $(SRCDIR)/%.cpp,$(BUILDDIR)/%.o,$(CXX_SOURCES))
 
 all: $(TARGET)
 
 $(BUILDDIR):
 	mkdir -p $(BUILDDIR)
 
-$(OBJECTS): $(BUILDDIR)/%.o: $(SRCDIR)/%.c | $(BUILDDIR)
-	$(CC) -c $< -o $@
+$(C_OBJECTS): $(BUILDDIR)/%.o: $(SRCDIR)/%.c | $(BUILDDIR)
+	$(CC) $(CFLAGS) -c $< -o $@
 
-$(TARGET): $(TARGET).c $(OBJECTS)
-	$(CC) $(TARGET).c $(OBJECTS) -o $@ $(CFLAGS)
+$(CXX_OBJECTS): $(BUILDDIR)/%.o: $(SRCDIR)/%.cpp | $(BUILDDIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-.PHONY:
-	clean all
+$(TARGET): $(TARGET).cpp $(C_OBJECTS) $(CXX_OBJECTS)
+	$(CXX) $(TARGET).cpp $(C_OBJECTS) $(CXX_OBJECTS) -o $@ $(CXXFLAGS)
+
+.PHONY: clean all
 
 clean:
 	rm -rf $(TARGET) $(BUILDDIR)

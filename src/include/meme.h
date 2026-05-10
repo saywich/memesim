@@ -5,6 +5,10 @@
 
 typedef max_align_t MAX_ALIGN_TYPE;
 
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
+
 void* ms_malloc_(size_t size);
 
 void* ms_calloc_(size_t n, size_t size);
@@ -12,6 +16,10 @@ void* ms_calloc_(size_t n, size_t size);
 void* ms_realloc_(void* ptr, size_t size);
 
 void ms_free_(void* ptr);
+
+#ifdef __cplusplus
+}
+#endif // __cplusplus
 
 #ifndef ms_malloc
 #define ms_malloc(size) ms_malloc_(size)
